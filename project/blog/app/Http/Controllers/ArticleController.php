@@ -3,21 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Article;
 
 class ArticleController extends Controller
 {
     public function index() {
 
-        $data = [
-            ["title" => "First Article"],
-            ["title" => "Second Article"]
-        ];
+        $data = Article::latest()->paginate(5);
+
         return view("articles.index", [
-            "articles" => $data
+            'articles' => $data
         ]);
     }
 
     public function detail(string $id) {
-        return "Article Controller Detail - $id";
+
+        $article = Article::find($id);
+
+        return view("articles.detail", [
+            'article' => $article
+        ]);
+    }
+
+    public function delete(string $id) {
+        $article = Article::find($id);
+        $article->delete();
+
+        return redirect("/articles")->with("info", "An article is deleted.");
     }
 }
