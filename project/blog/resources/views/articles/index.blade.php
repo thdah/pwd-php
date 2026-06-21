@@ -19,6 +19,8 @@
                         {{$article->title}}
                     </h3>
                     <div class="text-muted">
+                        <b>Category: {{$article->category->name}}, </b>
+                        <b>Comments: {{count($article->comments)}}, </b>
                         {{$article->created_at}}
                     </div>
                     <p>
