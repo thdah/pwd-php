@@ -19,9 +19,10 @@
                         {{$article->title}}
                     </h3>
                     <div class="text-muted">
+                        <b class="text-success">{{ $article->user->name }} </b>,
                         <b>Category: {{$article->category->name}}, </b>
                         <b>Comments: {{count($article->comments)}}, </b>
-                        {{$article->created_at}}
+                        {{$article->created_at->diffForHumans()}}
                     </div>
                     <p>
                         {{$article->body}}

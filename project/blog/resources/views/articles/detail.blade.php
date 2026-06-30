@@ -3,21 +3,30 @@
 @section("content")
 
     <div class="container" style="max-width: 600px;">
+        @if (session("info"))
+            <div class="alert alert-info">
+                {{ session("info") }}
+            </div>
+        @endif
+
         <div class="card mb-2">
                 <div class="card-body">
                     <h3 class="card-title">
                         {{$article->title}}
                     </h3>
                     <div class="text-muted">
+                        <b class="text-success">{{ $article->user->name }} </b>,
                         <b>Category: {{$article->category->name}}, </b>
-                        {{$article->created_at}}
+                        {{$article->created_at->diffForHumans()}}
                     </div>
                     <p>
                         {{$article->body}}
                     </p>
-                    <a href="{{ url("/articles/delete/$article->id") }}" class="btn btn-sm btn-outline-danger">
-                        Delete
-                    </a>
+                    @can("delete-article", $article)
+                        <a href="{{ url("/articles/delete/$article->id") }}" class="btn btn-sm btn-outline-danger">
+                            Delete
+                        </a>
+                    @endcan
                 </div>
             </div>
 
@@ -27,17 +36,24 @@
                 </li>
                 @foreach ($article->comments as $comment)
                     <li class="list-group-item">
-                        <a href="{{ url("/comments/delete/$comment->id") }}" class="btn-close float-end"></a>
+                        
+                        @can("delete-comment", $comment)
+                            <a href="{{ url("/comments/delete/$comment->id") }}" class="btn-close float-end"></a>
+                        @endcan    
+
+                        <b class="text-success">{{ $comment->user->name }} </b> - 
                         {{ $comment->content }}
                     </li>
                 @endforeach
             </ul>
 
-            <form action="{{ url("/comments/create") }}" method="post">
-                @csrf
-                <input type="hidden" name="article_id" value="{{ $article->id }}">
-                <textarea name="content" class="form-control my-4" placeholder="Write something..."></textarea>
-                <button class="btn btn-secondary">Add Comment</button>
-            </form>
+            @auth
+                <form action="{{ url("/comments/create") }}" method="post">
+                    @csrf
+                    <input type="hidden" name="article_id" value="{{ $article->id }}">
+                    <textarea name="content" class="form-control my-4" placeholder="Write something..."></textarea>
+                    <button class="btn btn-secondary">Add Comment</button>
+                </form>
+            @endauth
     </div>
 @endsection
